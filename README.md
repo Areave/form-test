@@ -1,72 +1,50 @@
-# Getting Started with Create React App
+Frontend Test Task – Multi-Step Form (React.js)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome! This test task is designed to evaluate your React.js frontend skills with a focus on form structure, CSS layout, clean design and interface usability.
 
-## Available Scripts
+Goal:
 
-In the project directory, you can run:
+Design a 10-step input-form using React.js and CSS only. All neccessary content and most of the structure are inside the repo already. The references also will be provided. 
 
-### `npm start`
+Tech Stack & DONT's:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+React.js + plain CSS. Don't mess with STATE and data transfering function.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Global Reference:
+Input forms on https://gosuslugi.ru/.
+If you dont have access to this website and form submissions, please check some screenshots: './Components/TestForm/Screenshots'.
+If you feel that you can do better than references, creativity and best-practice thinking are appreciated. We will be happy to have a look. Just keep in mind, that the current web app will be mostly about interactions with government and close-to-government facilities, while implementing new styles and design.
 
-### `npm test`
+Task Requirements:
+- Some select's inputs will reveal additional inputs — but the form structure must remain static (i.e., don't shift layout when inputs appear).
+- Implement field validation according to the rules we provide (See validations).
+- Include a searchable selector for:
+step 1: Select a province (Data: './Components/TestForm/DataForTestForm/PROVINCES', reference: https://evisa.gov.vn/e-visa/foreigners; go to the field '1.PERSONAL INFORMATION' and check input 'Nationality' ).
+step 3: Applicant's personal data 2/2 (Data: './Components/TestForm/DataForTestForm/Countries', reference: same 
+- Add helpful UX touches (error indicators, focus transitions). For error indicators, it should appear ONLY after error triggered from validation function or when we try to move the next step, and required* fields are empty.
+No error on the start of the step, no error when we click on input.
+- Floating tips on hover of particular inputs (for now you can chouse any three(3) inputs within different steps. (Reference: https://evisa.gov.vn/e-visa/foreigners; go to the field '6.INFORMATION ABOUT THE TRIP', and hover over 'Residential address in Viet Nam' ).
+- No need to work on summary page (step 10), since collected data going either to another function or database)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Validations:
+1. Only LATIN is permitted for all fields (obviously exept the dates).
+2. For names: no numbers and no symbols (sorry mr.Musk children).
+3. For email: only email.
+4. For phone: only numbers and symbols.
 
-### `npm run build`
+Addons (not compulsary):
+1. Add suitable navbar and footer of your choice.
+2. Progress Bar.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+How to start:
+git clone thist repository -> npm install -> npm start.
+or download this repository in zip, unzip and -> npm install -> npm start.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+How to submit:
+Pull request, send the link to your repository or even link to google drive with zip file. We dont care about your profficiency with git if you good with design, react and css.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+If you have questions:
+Please don't, in this README more than enough information for you to complete the task.
+If you absolutly need to, you have a contact.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-# This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-# testForm_frontend
+Happy coding!

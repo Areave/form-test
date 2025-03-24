@@ -3,6 +3,7 @@ import "./TestForm.css";
 import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import FormSelect from 'react-bootstrap/FormSelect';
+import CreatableSelect from "react-select/creatable";
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 const TestForm = () => {
@@ -78,6 +79,26 @@ const TestForm = () => {
               <option value="Phan Thiet">{'Phan Thiet'}</option>
               <option value="Vung Tau">{'Vung Tau'}</option>
             </FormSelect>
+          </div>
+          <div className="block">
+            <Form.Label>Select with search</Form.Label>
+            <CreatableSelect isClearable
+                             options={[
+                               {
+                                 value: 4,
+                                 label: '4'
+                               },
+                               {
+                                 value: 5,
+                                 label: '5'
+                               }
+                             ]}
+                             classNamePrefix={'custom-select'}
+                             className={'custom-select-container'}
+                             defaultValue={5}
+                             value={4}
+                             onChange ={(e) => {
+                             }}/>
           </div>
 
             <div className="block">

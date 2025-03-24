@@ -38,3 +38,18 @@ body {
   flex-direction: column;
   position: relative;
 }
+
+.block {
+  margin-bottom: 25px;
+}
+
+.block > label {
+  font-weight: bold;
+}
+.block > .hint {
+  font-size: 12px;
+  color: red;
+}
+.block > .form-check {
+  width: 100px;
+}

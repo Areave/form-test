@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import "./TestForm.css";
+import {Form} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import FormSelect from 'react-bootstrap/FormSelect';
+import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 const TestForm = () => {
   const [step, setStep] = useState(1);
@@ -65,18 +69,78 @@ const TestForm = () => {
               Please select the province where you reside and have either
               temporary or permanent registration
             </p>
-            <select
-              name="province"
-              value={formData.province}
-              onChange={handleChange}
-            >
-              <option value="">Select a Province</option>
-              <option value="Hanoi">Hanoi</option>
-              <option value="Da Nang">Da Nang</option>
-              <option value="Ho Chi Minh City">Ho Chi Minh City</option>
-              <option value="Phan Thiet">Phan Thiet</option>
-              <option value="Vung Tau">Vung Tau</option>
-            </select>
+          <div className="block">
+            <Form.Label>Select</Form.Label>
+            <FormSelect aria-label="Default select example"
+                        placeholder={'Open this select menu'}>
+              <option value="Hanoi">{'Hanoi'}</option>
+              <option value="Da Nang">{'Da Nang'}</option>
+              <option value="Phan Thiet">{'Phan Thiet'}</option>
+              <option value="Vung Tau">{'Vung Tau'}</option>
+            </FormSelect>
+          </div>
+
+            <div className="block">
+              <Form.Label>Input</Form.Label>
+              <Form.Control aria-label="Default select example"
+                          placeholder={'Placeholder'}/>
+            </div>
+
+
+            <div className="block">
+              <Form.Label>Input error</Form.Label>
+              <Form.Control aria-label="Default select example"
+                            isInvalid
+                            placeholder={'Placeholder'}/>
+              <div className="hint">Имя не должно содержать цифры</div>
+            </div>
+            <div className="block">
+              <Form.Label>Input disabled</Form.Label>
+              <Form.Control aria-label="Default select example"
+                            placeholder={'Placeholder'}
+                            disabled readonly/>
+            </div>
+
+            <div className="block">
+              <Form.Label>Input file upload</Form.Label>
+              <Form.Control type="file" />
+            </div>
+
+            <div className="block">
+              <Form.Label>Checkbox</Form.Label>
+              <Form.Check // prettier-ignore
+                  type={'checkbox'}
+                  id={`default-${'checkbox'}`}
+                  label={`default ${'checkbox'}`}
+              />
+            </div>
+            <div className="block">
+              <Form.Label>Radio</Form.Label>
+              <Form.Check
+                  type={'radio'}
+                  name={'group1'}
+                  label={`${'case 1'}`}
+                  id={`default-${'radio'}`}
+              />
+              <Form.Check
+                  type={'radio'}
+                  name={'group1'}
+                  label={`${'case 2'}`}
+                  id={`default-${'radio'}`}
+              />
+            </div>
+            {/*<select*/}
+            {/*  name="province"*/}
+            {/*  value={formData.province}*/}
+            {/*  onChange={handleChange}*/}
+            {/*>*/}
+            {/*  <option value="">Select a Province</option>*/}
+            {/*  <option value="Hanoi">Hanoi</option>*/}
+            {/*  <option value="Da Nang">Da Nang</option>*/}
+            {/*  <option value="Ho Chi Minh City">Ho Chi Minh City</option>*/}
+            {/*  <option value="Phan Thiet">Phan Thiet</option>*/}
+            {/*  <option value="Vung Tau">Vung Tau</option>*/}
+            {/*</select>*/}
           </div>
         )}
 
@@ -685,8 +749,10 @@ const TestForm = () => {
 
         {/* Step Navigation */}
         <div className="buttons">
-          {step > 1 && <button onClick={prevStep}>Back</button>}
-          {step < 10 && <button onClick={nextStep}>Next</button>}
+          {step > 1 && <Button variant="primary" onClick={prevStep}>Back</Button>}
+          {/*{step > 1 && <button onClick={prevStep}>Back</button>}*/}
+          {step < 10 && <Button variant="primary" onClick={nextStep}>Next</Button>}
+          {/*{step < 10 && <button onClick={nextStep}>Next</button>}*/}
           {step === 10 && <button>Submit</button>}
         </div>
       </div>

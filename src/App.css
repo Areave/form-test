@@ -1,2 +1,11 @@
-
+.App {
+    height: 100%;
+    /*background: linear-gradient(135deg, #e3f2fd, #c5cae9);*/
+    background-color: rgb(250, 252, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-family: Lato,Arial,sans-serif;
+}
 

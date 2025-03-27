@@ -1,14 +1,41 @@
+html > * {
+  display: block;
+}
+
+html {
+  /*height: 100%;*/
+}
+
 body {
   /*background: linear-gradient(135deg, #e3f2fd, #c5cae9);*/
   /*height: 100vh;*/
-  /*display: flex;*/
-  /*align-items: center;*/
-  /*justify-content: center;*/
+  /*height: 100%;*/
+
+  /*width: 100%;*/
+  /*height: 100%;*/
   /*font-family: "Poppins", sans-serif;*/
 }
 
+#root {
+  /*height: 100%;*/
+}
+
+.App {
+  /*height: 100%;*/
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: center;*/
+}
+
 .content {
-  margin-top: 100px;
+  /*flex-grow: 1;*/
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /*height: 100%;*/
+  /*padding-top: 300px;*/
+  min-height: 100vh;
 }
 
 .page_title {
@@ -55,8 +82,10 @@ body {
 }
 
 .block {
-  margin-bottom: 25px;
+  /*margin-bottom: 10px;*/
+  padding-bottom: 18px;
   text-align: left;
+  position: relative;
 }
 
 .block > label {
@@ -67,12 +96,17 @@ body {
   font-size: 14px;
   text-align: left;
 }
-.block > .hint {
-  margin-top: 8px;
+.block > .hint_container {
+  position: absolute;
+  bottom: 3px;
+  height: 16px;
+}
+.block > .hint_container > .hint {
+  /*margin-top: 8px;*/
   font-size: 12px;
   color: grey;
 }
-.block > .hint.error {
+.block > .hint_container > .hint.error {
   color: red;
 }
 .block > .form-check {
@@ -83,6 +117,30 @@ body {
   font-size: 16px;
   background-color: rgb(245, 247, 250);
   border-radius: 4px;
+}
+.block > .datePicker > .react-datepicker__input-container > input{
+  width: 100%;
+  height: 52px;
+  font-size: 16px;
+  background-color: rgb(245, 247, 250);
+  border-radius: 4px;
+  padding-left: 40px;
+  color: grey;
+  border: .8px solid rgb(222, 226, 230);
+}
+/*.block > .datePicker > .react-datepicker__input-container > input:hover,*/
+/*.block > .datePicker > .react-datepicker__input-container > input:active,*/
+.block > .datePicker > .react-datepicker__input-container > input:focus,
+.block > .datePicker > .react-datepicker__input-container > input:focus-visible {
+  outline: 1px solid blue !important;
+  box-shadow: none;
+}
+.block > .datePicker > .react-datepicker__input-container > svg {
+  padding-top: 18px;
+  padding-left: 15px;
+}
+.block > .datePicker {
+  width: 100%;
 }
 
 .block > select:focus {
@@ -131,5 +189,5 @@ body {
   background-color: #0d4cd3;
   cursor: pointer;
   white-space: nowrap;
-  margin-bottom: 40px;
+  margin: 0 15px 40px;
 }

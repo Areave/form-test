@@ -1,18 +1,20 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./TestForm.css";
 import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import FormSelect from 'react-bootstrap/FormSelect';
 import CreatableSelect from "react-select/creatable";
+import Select from 'react-select';
+
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import 'react-datepicker/dist/react-datepicker.css'
+
 
 const TestForm = () => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        selectSearchValue: {
-          label: '5',
-          value: 5
-        },
         province: "",
         fullName: "",
         otherNames: "",
@@ -53,6 +55,10 @@ const TestForm = () => {
     const nextStep = () => setStep((prev) => prev + 1);
     const prevStep = () => setStep((prev) => prev - 1);
 
+    useEffect(() => {
+        console.log('formData', formData);
+    }, [formData]);
+
     const handleChange = (e) => {
         const {name, value, type, checked} = e.target;
         setFormData({
@@ -61,78 +67,121 @@ const TestForm = () => {
         });
     };
 
+    const pageTitleArray = ['',
+        'Select a Province',
+        'Applicant\'s Personal Data (1/2)',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+        '24234',
+    ];
+    const provinces = [
+        {
+            value: 'Hanoi',
+            label: 'Hanoi'
+        },
+        {
+            value: 'Da Nang',
+            label: 'Da Nang'
+        },
+        {
+            value: 'Ho Chi Minh City',
+            label: 'Ho Chi Minh City'
+        },
+        {
+            value: 'Phan Thiet',
+            label: 'Phan Thiet'
+        },
+        {
+            value: 'Vung Tau',
+            label: 'Vung Tau'
+        },
+    ];
+
+    const isOnlyEnglishLetters = (textValue) => {
+        if (!textValue) return true;
+        const reg = /^[a-zA-Z ]+$/;
+        // console.log(reg.test(textValue));
+        return reg.test(textValue)
+    };
+    const isOnlyNumbers = (textValue) => {
+        if (!textValue) return true;
+        const reg = /^[0-9]+$/;
+        // console.log(reg.test(textValue));
+        return reg.test(textValue)
+    };
+    const isOnlyLetters = (textValue) => {
+
+    };
+    const isEmail = (textValue) => {
+
+    };
+
     return (<div className={'content'}>
-            <div className="page_title">{'Select a Province'}</div>
+            <div className="page_title">{pageTitleArray[step] || ''}</div>
+
+
             <div className="glass-card">
-
-
-                {/* Step 1: Select Province */}
                 {step === 1 && (
-                    <div>
+                    <>
                         <div className="block">
                             <Form.Label> Please select the province where you reside and have either
                                 temporary or permanent registration</Form.Label>
-                            <FormSelect aria-label="Default select example"
-                                        bsPrefix={'form-select sel'}
-                                        placeholder={'Open this select menu'}>
-                                <option value="Hanoi">{'Hanoi'}</option>
-                                <option value="Da Nang">{'Da Nang'}</option>
-                                <option value="Phan Thiet">{'Phan Thiet'}</option>
-                                <option value="Vung Tau">{'Vung Tau'}</option>
-                            </FormSelect>
-                        </div>
-                        <div className="block">
-                            <Form.Label>Ваша оценка по математике</Form.Label>
-                            <CreatableSelect isClearable
-                                             placeholder={'Выберите оценку'}
-                                             styles={{
-                                                 control: (baseStyles, state) => ({
-                                                     ...baseStyles,
-                                                     // border: '2px solid black',
-                                                     // borderColor: state.isFocused ? 'blue' : 'none',
-                                                     height: '52px',
-                                                     borderRadius: '4px',
-                                                   backgroundColor: 'rgb(245, 247, 250)'
-                                                 }),
-                                             }}
-                                             options={[
-                                                 {
-                                                     value: 4,
-                                                     label: '4'
-                                                 },
-                                                 {
-                                                     value: 5,
-                                                     label: '5'
-                                                 }
-                                             ]}
-                                             classNamePrefix={'custom-select'}
-                                             className={'custom-select-container'}
-                                             defaultValue={formData.selectSearchValue}
-                                             // value={formData.selectSearchValue}
-                                             onChange={(e) => {
-                                               e && setFormData({...formData, selectSearchValue: e.value})
-                                             }}/>
+                            <Select isSearchable
+                                    allowCreateWhileLoading={false}
+                                    placeholder={'Select a Province'}
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            // border: '2px solid black',
+                                            // borderColor: state.isFocused ? 'blue' : 'none',
+                                            height: '52px',
+                                            borderRadius: '4px',
+                                            backgroundColor: 'rgb(245, 247, 250)'
+                                        }),
+                                    }}
+                                    options={provinces}
+                                    classNamePrefix={'custom-select'}
+                                    className={'custom-select-container'}
+                                    defaultValue={formData.province}
+                                // value={formData.selectSearchValue}
+                                    onChange={(e) => {
+                                        e && setFormData({...formData, province: e.value})
+                                    }}/>
+                            {/*<FormSelect aria-label="Default select example"*/}
+                            {/*            bsPrefix={'form-select sel'}*/}
+                            {/*            placeholder={'Open this select menu'}>*/}
+                            {/*    <option value="Hanoi">{'Hanoi'}</option>*/}
+                            {/*    <option value="Da Nang">{'Da Nang'}</option>*/}
+                            {/*    <option value="Phan Thiet">{'Phan Thiet'}</option>*/}
+                            {/*    <option value="Vung Tau">{'Vung Tau'}</option>*/}
+                            {/*</FormSelect>*/}
                         </div>
 
-                        <div className="block">
-                            <Form.Label>{'Ваше имя'}</Form.Label>
-                            <Form.Control aria-label="Default select example"
-                                          type={'text'}
-                                          bsPrefix={'form-control inp'}
-                                          placeholder={'Введите имя'}/>
-                          <div className="hint">Имя должно быть на русском языке</div>
-                        </div>
+                        {/*<div className="block">*/}
+                        {/*    <Form.Label>{'Ваше имя'}</Form.Label>*/}
+                        {/*    <Form.Control aria-label="Default select example"*/}
+                        {/*                  type={'text'}*/}
+                        {/*                  bsPrefix={'form-control inp'}*/}
+                        {/*                  placeholder={'Введите имя'}/>*/}
+                        {/*  <div className="hint">Имя должно быть на русском языке</div>*/}
+                        {/*</div>*/}
 
 
-                        <div className="block">
-                          <Form.Label>{'Ваше имя'}</Form.Label>
-                          <Form.Control aria-label="Default select example"
-                                        type={'text'}
-                                        isInvalid
-                                        bsPrefix={'form-control inp'}
-                                        placeholder={'Введите имя'}/>
-                          <div className="hint error">Имя не должно содержать цифры</div>
-                        </div>
+                        {/*<div className="block">*/}
+                        {/*  <Form.Label>{'Ваше имя'}</Form.Label>*/}
+                        {/*  <Form.Control aria-label="Default select example"*/}
+                        {/*                type={'text'}*/}
+                        {/*                isInvalid*/}
+                        {/*                bsPrefix={'form-control inp'}*/}
+                        {/*                placeholder={'Введите имя'}/>*/}
+                        {/*  <div className="hint error">Имя не должно содержать цифры</div>*/}
+                        {/*</div>*/}
                         {/*<div className="block">*/}
                         {/*    <Form.Label>Input disabled</Form.Label>*/}
                         {/*    <Form.Control aria-label="Default select example"*/}
@@ -180,103 +229,184 @@ const TestForm = () => {
                         {/*  <option value="Phan Thiet">Phan Thiet</option>*/}
                         {/*  <option value="Vung Tau">Vung Tau</option>*/}
                         {/*</select>*/}
-                    </div>
+                    </>
                 )}
 
                 {/* Step 2: Applicant's Personal Data (1/2) */}
                 {step === 2 && (
-                    <div>
-                        <h3>Applicant's Personal Data (1/2)</h3>
-                        <div className="grid">
-                            <div className="input-group">
-                                <label>
-                                    Full Name <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="fullName"
-                                        value={formData.fullName}
-                                        onChange={handleChange}
-                                        placeholder="Enter your full legal name"
-                                    />
-                                </div>
+                    <>
+                        {/*Name*/}
+                        <div className="block">
+                            <Form.Label>{'Full Name *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.fullName}
+                                          bsPrefix={'form-control inp'}
+                                          name="fullName"
+                                          placeholder={'Enter your full legal name'}
+                                          onChange={handleChange}/>
+                            <div className="hint_container">
+                                {!isOnlyEnglishLetters(formData.fullName) && <div className="hint error">Only english letters required</div>}
                             </div>
+                        </div>
+
+                        {/*Sex*/}
+                        <div className="block">
+                            <Form.Label>{'Sex *'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
+                                        value={formData.sex}
+                                        name={'sex'}
+                                        onChange={handleChange}
+                                        placeholder={'Select sex'}>
+                                <option value="Male">{'Male'}</option>
+                                <option value="Female">{'Female'}</option>
+                            </FormSelect>
+                        </div>
+
+                        {/*ID document*/}
+                        <div className="block">
+                            <Form.Label>{'ID Document *'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
+                                        value={formData.idDocument}
+                                        name={'idDocument'}
+                                        onChange={handleChange}
+                                        placeholder={'ID Document'}>
+                                <option value="Passport">{'Passport'}</option>
+                                <option value="National ID">{'National ID'}</option>
+                            </FormSelect>
+                        </div>
+
+                        {/*ID number*/}
+                        <div className="block">
+                            <Form.Label>{'ID Number *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.idNumber}
+                                          bsPrefix={'form-control inp'}
+                                          name="idNumber"
+                                          placeholder={'Enter ID Number'}
+                                          onChange={handleChange}/>
+                            <div className="hint_container">
+                                {!isOnlyNumbers(formData.idNumber) && <div className="hint error">Only digits required</div>}
+                            </div>
+                        </div>
+
+                        {/*Issued On **/}
+                        <div className="block">
+                            <Form.Label>{'Issued On *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={Date.now()}
+                                onSelect={(e) => {
+                                    setFormData({...formData, issuedOn: e.toLocaleDateString()});
+                                }}
+                            />
+                        </div>
+
+                        {/*Issued At **/}
+                        <div className="block">
+                            <Form.Label>{'Issued At *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={Date.now()}
+                                onSelect={(e) => {
+                                    setFormData({...formData, issuedAt: e.toLocaleDateString()});
+                                }}
+                            />
+                        </div>
+
+                        {/*<div className="grid">*/}
+                            {/*<div className="input-group">*/}
+                            {/*    <label>*/}
+                            {/*        Full Name <span className="required">*</span>*/}
+                            {/*    </label>*/}
+                            {/*    <div className="input-icon-group">*/}
+                            {/*        <input*/}
+                            {/*            type="text"*/}
+                            {/*            name="fullName"*/}
+                            {/*            value={formData.fullName}*/}
+                            {/*            onChange={handleChange}*/}
+                            {/*            placeholder="Enter your full legal name"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
 
                             {/* Sex */}
-                            <div className="input-group">
-                                <label>
-                                    Sex <span className="required">*</span>
-                                </label>
-                                <select name="sex" value={formData.sex} onChange={handleChange}>
-                                    <option value="">Select</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                </select>
-                            </div>
-                        </div>
+                            {/*<div className="input-group">*/}
+                            {/*    <label>*/}
+                            {/*        Sex <span className="required">*</span>*/}
+                            {/*    </label>*/}
+                            {/*    <select name="sex" value={formData.sex} onChange={handleChange}>*/}
+                            {/*        <option value="">Select</option>*/}
+                            {/*        <option value="Male">Male</option>*/}
+                            {/*        <option value="Female">Female</option>*/}
+                            {/*    </select>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
                         {/* Row 2: ID Document, ID Number */}
-                        <div className="grid">
-                            <div className="input-group">
-                                <label>
-                                    ID Document <span className="required">*</span>
-                                </label>
-                                <select
-                                    name="idDocument"
-                                    value={formData.idDocument}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select</option>
-                                    <option value="Passport">Passport</option>
-                                    <option value="National ID">National ID</option>
-                                </select>
-                            </div>
+                        {/*<div className="grid">*/}
+                            {/*<div className="input-group">*/}
+                            {/*    <label>*/}
+                            {/*        ID Document <span className="required">*</span>*/}
+                            {/*    </label>*/}
+                            {/*    <select*/}
+                            {/*        name="idDocument"*/}
+                            {/*        value={formData.idDocument}*/}
+                            {/*        onChange={handleChange}*/}
+                            {/*    >*/}
+                            {/*        <option value="">Select</option>*/}
+                            {/*        <option value="Passport">Passport</option>*/}
+                            {/*        <option value="National ID">National ID</option>*/}
+                            {/*    </select>*/}
+                            {/*</div>*/}
 
-                            <div className="input-group">
-                                <label>
-                                    ID Number <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    name="idNumber"
-                                    value={formData.idNumber}
-                                    onChange={handleChange}
-                                    placeholder="Enter ID number"
-                                />
-                            </div>
-                        </div>
+                            {/*<div className="input-group">*/}
+                            {/*    <label>*/}
+                            {/*        ID Number <span className="required">*</span>*/}
+                            {/*    </label>*/}
+                            {/*    <input*/}
+                            {/*        type="text"*/}
+                            {/*        name="idNumber"*/}
+                            {/*        value={formData.idNumber}*/}
+                            {/*        onChange={handleChange}*/}
+                            {/*        placeholder="Enter ID number"*/}
+                            {/*    />*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
 
                         {/* Row 3: Issued On, Issued At */}
-                        <div className="grid">
-                            <div className="input-group">
-                                <label>
-                                    Issued On <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    name="issuedOn"
-                                    value={formData.issuedOn}
-                                    onChange={handleChange}
-                                />
-                            </div>
+                        {/*<div className="grid">*/}
+                        {/*    <div className="input-group">*/}
+                        {/*        <label>*/}
+                        {/*            Issued On <span className="required">*</span>*/}
+                        {/*        </label>*/}
+                        {/*        <input*/}
+                        {/*            type="date"*/}
+                        {/*            name="issuedOn"*/}
+                        {/*            value={formData.issuedOn}*/}
+                        {/*            onChange={handleChange}*/}
+                        {/*        />*/}
+                        {/*    </div>*/}
 
-                            <div className="input-group">
-                                <label>
-                                    Issued At <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="issuedAt"
-                                        value={formData.issuedAt}
-                                        onChange={handleChange}
-                                        placeholder="Enter issuing authority"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        {/*    <div className="input-group">*/}
+                        {/*        <label>*/}
+                        {/*            Issued At <span className="required">*</span>*/}
+                        {/*        </label>*/}
+                        {/*        <div className="input-icon-group">*/}
+                        {/*            <input*/}
+                        {/*                type="text"*/}
+                        {/*                name="issuedAt"*/}
+                        {/*                value={formData.issuedAt}*/}
+                        {/*                onChange={handleChange}*/}
+                        {/*                placeholder="Enter issuing authority"*/}
+                        {/*            />*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
+                    </>
                 )}
 
                 {/* Step 3: Applicant's Personal Data (2/2) */}
@@ -790,6 +920,8 @@ const TestForm = () => {
                 {/* Step Navigation */}
 
             </div>
+
+
             <div className="buttons">
                 {step > 1 && <Button variant="primary" onClick={prevStep}>Back</Button>}
                 {/*{step > 1 && <button onClick={prevStep}>Back</button>}*/}

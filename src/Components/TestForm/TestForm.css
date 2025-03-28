@@ -1,40 +1,10 @@
-html > * {
-  display: block;
-}
-
-html {
-  /*height: 100%;*/
-}
-
-body {
-  /*background: linear-gradient(135deg, #e3f2fd, #c5cae9);*/
-  /*height: 100vh;*/
-  /*height: 100%;*/
-
-  /*width: 100%;*/
-  /*height: 100%;*/
-  /*font-family: "Poppins", sans-serif;*/
-}
-
-#root {
-  /*height: 100%;*/
-}
-
-.App {
-  /*height: 100%;*/
-  /*display: flex;*/
-  /*justify-content: center;*/
-  /*align-items: center;*/
-}
-
 .content {
   /*flex-grow: 1;*/
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  /*height: 100%;*/
-  /*padding-top: 300px;*/
+  justify-content: flex-start;
+  padding-top: 30px;
   min-height: 100vh;
 }
 
@@ -87,6 +57,9 @@ body {
   text-align: left;
   position: relative;
 }
+.annotation {
+  margin-bottom: 20px;
+}
 
 .block > label {
   /*font-weight: bold;*/
@@ -95,6 +68,7 @@ body {
   font-weight:400;
   font-size: 14px;
   text-align: left;
+  margin-bottom: 3px;
 }
 .block > .hint_container {
   position: absolute;

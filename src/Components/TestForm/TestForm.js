@@ -3,38 +3,41 @@ import "./TestForm.css";
 import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import FormSelect from 'react-bootstrap/FormSelect';
-import CreatableSelect from "react-select/creatable";
 import Select from 'react-select';
-
+import {pageTitleArray, provinces, regexs, errorHints} from './data.js'
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import 'react-datepicker/dist/react-datepicker.css'
+import {countries} from "./data";
 
 
 const TestForm = () => {
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(6);
+    const [errors, setErrors] = useState([]);
+    const [isEmptyErrors, setIsEmptyErrors] = useState([]);
+    const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
     const [formData, setFormData] = useState({
         province: "",
         fullName: "",
         otherNames: "",
-        sex: "",
-        idDocument: "",
+        sex: "Male",
+        idDocument: "Passport",
         idNumber: "",
-        issuedOn: "",
+        issuedOn: new Date(),
         issuedAt: "",
         placeOfBirth: "",
-        dateOfBirth: "",
+        dateOfBirth: new Date(),
         nationality: "",
         ethnicGroup: "",
         permanentAddress: "",
         temporaryAddress: "",
         fatherName: "",
-        fatherDOB: "",
+        fatherDOB: new Date(),
         motherName: "",
-        motherDOB: "",
+        motherDOB: new Date(),
         spouseName: "",
-        spouseDOB: "",
+        spouseDOB: new Date(),
         phone: "",
         email: "",
         lastEntry: "",
@@ -52,12 +55,29 @@ const TestForm = () => {
         deliveryAddress: "",
     });
 
-    const nextStep = () => setStep((prev) => prev + 1);
-    const prevStep = () => setStep((prev) => prev - 1);
+    const nextStep = () => {
+        setErrors([]);
+        setStep((prev) => prev + 1)
+    };
+    const prevStep = () => {
+        setErrors([]);
+        setStep((prev) => prev - 1)
+    };
 
     useEffect(() => {
-        console.log('formData', formData);
-    }, [formData]);
+        // console.log('formData', formData);
+        const shouldNextButtonBeDisabled = checkIsNextButtonDisabled();
+        if (isNextButtonDisabled !== shouldNextButtonBeDisabled) {
+            setIsNextButtonDisabled(shouldNextButtonBeDisabled);
+        }
+    }, [formData, step]);
+
+    useEffect(() => {
+        // console.log('errors', errors);
+    }, [errors]);
+    useEffect(() => {
+        // console.log('isEmptyErrors', isEmptyErrors);
+    }, [isEmptyErrors]);
 
     const handleChange = (e) => {
         const {name, value, type, checked} = e.target;
@@ -67,60 +87,61 @@ const TestForm = () => {
         });
     };
 
-    const pageTitleArray = ['',
-        'Select a Province',
-        'Applicant\'s Personal Data (1/2)',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-        '24234',
-    ];
-    const provinces = [
-        {
-            value: 'Hanoi',
-            label: 'Hanoi'
-        },
-        {
-            value: 'Da Nang',
-            label: 'Da Nang'
-        },
-        {
-            value: 'Ho Chi Minh City',
-            label: 'Ho Chi Minh City'
-        },
-        {
-            value: 'Phan Thiet',
-            label: 'Phan Thiet'
-        },
-        {
-            value: 'Vung Tau',
-            label: 'Vung Tau'
-        },
-    ];
+    const checkIsNextButtonDisabled = () => {
+        console.log(' errors.length > 0', errors.length > 0);
+        console.log('isEmptyErrors.length > 0', isEmptyErrors.length > 0);
+        console.log('document.getElementsByClassName(\'hint\').length > 0', document.getElementsByClassName('hint').length > 0);
+        console.log('document.getElementsByClassName(\'hint\')', document.getElementsByClassName('hint'));
+        return errors.length > 0 || isEmptyErrors.length > 0 || document.getElementsByClassName('hint').length > 0;
+    };
 
-    const isOnlyEnglishLetters = (textValue) => {
-        if (!textValue) return true;
-        const reg = /^[a-zA-Z ]+$/;
-        // console.log(reg.test(textValue));
-        return reg.test(textValue)
+    const validateFieldByRegex = (fieldName, value, regex) => {
+        const result = regex.test(value);
+        if (result) {
+            if (errors.includes(fieldName)) {
+                setErrors(errors.filter(errorString => errorString !== fieldName));
+            }
+        } else {
+            if (!errors.includes(fieldName)) {
+                setErrors([...errors, fieldName]);
+            }
+        }
     };
-    const isOnlyNumbers = (textValue) => {
-        if (!textValue) return true;
-        const reg = /^[0-9]+$/;
-        // console.log(reg.test(textValue));
-        return reg.test(textValue)
-    };
-    const isOnlyLetters = (textValue) => {
 
-    };
-    const isEmail = (textValue) => {
+    const validateField = (fieldName, value, regex, shouldBeFilled = true) => {
 
+        if (!value) {
+            setErrors(errors.filter(errorString => errorString !== fieldName));
+        }
+
+        if (shouldBeFilled) {
+            if (!value) {
+                if (!isEmptyErrors.includes(fieldName)) {
+                    setIsEmptyErrors([...isEmptyErrors, fieldName]);
+                }
+            } else {
+                if (isEmptyErrors.includes(fieldName)) {
+                    setIsEmptyErrors(isEmptyErrors.filter(errorString => errorString !== fieldName));
+                }
+                validateFieldByRegex(fieldName, value, regex);
+            }
+        } else {
+            validateFieldByRegex(fieldName, value, regex);
+        }
     };
+
+
+    // const stringToDate = (_date, _format, _delimiter) => {
+    //     const formatLowerCase = _format.toLowerCase();
+    //     const formatItems = formatLowerCase.split(_delimiter);
+    //     const dateItems = _date.split(_delimiter);
+    //     const monthIndex = formatItems.indexOf("mm");
+    //     const dayIndex = formatItems.indexOf("dd");
+    //     const yearIndex = formatItems.indexOf("yyyy");
+    //     let month = parseInt(dateItems[monthIndex]);
+    //     month -= 1;
+    //     return new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+    // };
 
     return (<div className={'content'}>
             <div className="page_title">{pageTitleArray[step] || ''}</div>
@@ -145,7 +166,12 @@ const TestForm = () => {
                                             backgroundColor: 'rgb(245, 247, 250)'
                                         }),
                                     }}
-                                    options={provinces}
+                                    options={provinces.map((provinceString) => {
+                                        return {
+                                            value: provinceString,
+                                            label: provinceString,
+                                        }
+                                    })}
                                     classNamePrefix={'custom-select'}
                                     className={'custom-select-container'}
                                     defaultValue={formData.province}
@@ -153,82 +179,11 @@ const TestForm = () => {
                                     onChange={(e) => {
                                         e && setFormData({...formData, province: e.value})
                                     }}/>
-                            {/*<FormSelect aria-label="Default select example"*/}
-                            {/*            bsPrefix={'form-select sel'}*/}
-                            {/*            placeholder={'Open this select menu'}>*/}
-                            {/*    <option value="Hanoi">{'Hanoi'}</option>*/}
-                            {/*    <option value="Da Nang">{'Da Nang'}</option>*/}
-                            {/*    <option value="Phan Thiet">{'Phan Thiet'}</option>*/}
-                            {/*    <option value="Vung Tau">{'Vung Tau'}</option>*/}
-                            {/*</FormSelect>*/}
+                            <div className="hint_container">
+                                {(isEmptyErrors.includes('province') || !formData.province) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
                         </div>
-
-                        {/*<div className="block">*/}
-                        {/*    <Form.Label>{'Ваше имя'}</Form.Label>*/}
-                        {/*    <Form.Control aria-label="Default select example"*/}
-                        {/*                  type={'text'}*/}
-                        {/*                  bsPrefix={'form-control inp'}*/}
-                        {/*                  placeholder={'Введите имя'}/>*/}
-                        {/*  <div className="hint">Имя должно быть на русском языке</div>*/}
-                        {/*</div>*/}
-
-
-                        {/*<div className="block">*/}
-                        {/*  <Form.Label>{'Ваше имя'}</Form.Label>*/}
-                        {/*  <Form.Control aria-label="Default select example"*/}
-                        {/*                type={'text'}*/}
-                        {/*                isInvalid*/}
-                        {/*                bsPrefix={'form-control inp'}*/}
-                        {/*                placeholder={'Введите имя'}/>*/}
-                        {/*  <div className="hint error">Имя не должно содержать цифры</div>*/}
-                        {/*</div>*/}
-                        {/*<div className="block">*/}
-                        {/*    <Form.Label>Input disabled</Form.Label>*/}
-                        {/*    <Form.Control aria-label="Default select example"*/}
-                        {/*                  placeholder={'Placeholder'}*/}
-                        {/*                  disabled readonly/>*/}
-                        {/*</div>*/}
-
-                        {/*<div className="block">*/}
-                        {/*    <Form.Label>Input file upload</Form.Label>*/}
-                        {/*    <Form.Control type="file"/>*/}
-                        {/*</div>*/}
-
-                        {/*<div className="block">*/}
-                        {/*    <Form.Label>Checkbox</Form.Label>*/}
-                        {/*    <Form.Check // prettier-ignore*/}
-                        {/*        type={'checkbox'}*/}
-                        {/*        id={`default-${'checkbox'}`}*/}
-                        {/*        label={`default ${'checkbox'}`}*/}
-                        {/*    />*/}
-                        {/*</div>*/}
-                        {/*<div className="block">*/}
-                        {/*    <Form.Label>Radio</Form.Label>*/}
-                        {/*    <Form.Check*/}
-                        {/*        type={'radio'}*/}
-                        {/*        name={'group1'}*/}
-                        {/*        label={`${'case 1'}`}*/}
-                        {/*        id={`default-${'radio'}`}*/}
-                        {/*    />*/}
-                        {/*    <Form.Check*/}
-                        {/*        type={'radio'}*/}
-                        {/*        name={'group1'}*/}
-                        {/*        label={`${'case 2'}`}*/}
-                        {/*        id={`default-${'radio'}`}*/}
-                        {/*    />*/}
-                        {/*</div>*/}
-                        {/*<select*/}
-                        {/*  name="province"*/}
-                        {/*  value={formData.province}*/}
-                        {/*  onChange={handleChange}*/}
-                        {/*>*/}
-                        {/*  <option value="">Select a Province</option>*/}
-                        {/*  <option value="Hanoi">Hanoi</option>*/}
-                        {/*  <option value="Da Nang">Da Nang</option>*/}
-                        {/*  <option value="Ho Chi Minh City">Ho Chi Minh City</option>*/}
-                        {/*  <option value="Phan Thiet">Phan Thiet</option>*/}
-                        {/*  <option value="Vung Tau">Vung Tau</option>*/}
-                        {/*</select>*/}
                     </>
                 )}
 
@@ -243,9 +198,14 @@ const TestForm = () => {
                                           bsPrefix={'form-control inp'}
                                           name="fullName"
                                           placeholder={'Enter your full legal name'}
-                                          onChange={handleChange}/>
+                                          onChange={(e) => {
+                                              validateField('fullName', e.target.value, regexs.forOnlyEnglishAndVietnameeseLetters);
+                                              handleChange(e);
+                                          }}/>
                             <div className="hint_container">
-                                {!isOnlyEnglishLetters(formData.fullName) && <div className="hint error">Only english letters required</div>}
+                                {errors.includes('fullName') && <div className="hint error">{errorHints.forOnlyEnglishAndVietnameeseLetters}</div>}
+                                {(isEmptyErrors.includes('fullName') || !formData.fullName) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
 
@@ -283,9 +243,14 @@ const TestForm = () => {
                                           bsPrefix={'form-control inp'}
                                           name="idNumber"
                                           placeholder={'Enter ID Number'}
-                                          onChange={handleChange}/>
+                                          onChange={(e) => {
+                                              validateField('idNumber', e.target.value, regexs.forOnlyDigitsAndEnglishLetters);
+                                              handleChange(e);
+                                          }}/>
                             <div className="hint_container">
-                                {!isOnlyNumbers(formData.idNumber) && <div className="hint error">Only digits required</div>}
+                                {errors.includes('idNumber') && <div className="hint error">{errorHints.forOnlyDigitsAndEnglishLetters}</div>}
+                                {(isEmptyErrors.includes('idNumber') || !formData.idNumber) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
 
@@ -296,9 +261,9 @@ const TestForm = () => {
                                 wrapperClassName="datePicker"
                                 dateFormat="dd/MM/yyyy"
                                 showIcon
-                                selected={Date.now()}
+                                selected={formData.issuedOn}
                                 onSelect={(e) => {
-                                    setFormData({...formData, issuedOn: e.toLocaleDateString()});
+                                    setFormData({...formData, issuedOn: e});
                                 }}
                             />
                         </div>
@@ -306,357 +271,315 @@ const TestForm = () => {
                         {/*Issued At **/}
                         <div className="block">
                             <Form.Label>{'Issued At *'}</Form.Label>
-                            <DatePicker
-                                wrapperClassName="datePicker"
-                                dateFormat="dd/MM/yyyy"
-                                showIcon
-                                selected={Date.now()}
-                                onSelect={(e) => {
-                                    setFormData({...formData, issuedAt: e.toLocaleDateString()});
-                                }}
-                            />
+                            <Form.Control type={'text'}
+                                          value={formData.issuedAt}
+                                          bsPrefix={'form-control inp'}
+                                          name="issuedAt"
+                                          placeholder={'Issued at'}
+                                          onChange={(e) => {
+                                              validateField('issuedAt', e.target.value, regexs.forOnlyDigitsAndEnglishLetters);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('issuedAt') && <div className="hint error">{errorHints.forOnlyDigitsAndEnglishLetters}</div>}
+                                {(isEmptyErrors.includes('issuedAt') || !formData.issuedAt) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
                         </div>
-
-                        {/*<div className="grid">*/}
-                            {/*<div className="input-group">*/}
-                            {/*    <label>*/}
-                            {/*        Full Name <span className="required">*</span>*/}
-                            {/*    </label>*/}
-                            {/*    <div className="input-icon-group">*/}
-                            {/*        <input*/}
-                            {/*            type="text"*/}
-                            {/*            name="fullName"*/}
-                            {/*            value={formData.fullName}*/}
-                            {/*            onChange={handleChange}*/}
-                            {/*            placeholder="Enter your full legal name"*/}
-                            {/*        />*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
-
-                            {/* Sex */}
-                            {/*<div className="input-group">*/}
-                            {/*    <label>*/}
-                            {/*        Sex <span className="required">*</span>*/}
-                            {/*    </label>*/}
-                            {/*    <select name="sex" value={formData.sex} onChange={handleChange}>*/}
-                            {/*        <option value="">Select</option>*/}
-                            {/*        <option value="Male">Male</option>*/}
-                            {/*        <option value="Female">Female</option>*/}
-                            {/*    </select>*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-
-                        {/* Row 2: ID Document, ID Number */}
-                        {/*<div className="grid">*/}
-                            {/*<div className="input-group">*/}
-                            {/*    <label>*/}
-                            {/*        ID Document <span className="required">*</span>*/}
-                            {/*    </label>*/}
-                            {/*    <select*/}
-                            {/*        name="idDocument"*/}
-                            {/*        value={formData.idDocument}*/}
-                            {/*        onChange={handleChange}*/}
-                            {/*    >*/}
-                            {/*        <option value="">Select</option>*/}
-                            {/*        <option value="Passport">Passport</option>*/}
-                            {/*        <option value="National ID">National ID</option>*/}
-                            {/*    </select>*/}
-                            {/*</div>*/}
-
-                            {/*<div className="input-group">*/}
-                            {/*    <label>*/}
-                            {/*        ID Number <span className="required">*</span>*/}
-                            {/*    </label>*/}
-                            {/*    <input*/}
-                            {/*        type="text"*/}
-                            {/*        name="idNumber"*/}
-                            {/*        value={formData.idNumber}*/}
-                            {/*        onChange={handleChange}*/}
-                            {/*        placeholder="Enter ID number"*/}
-                            {/*    />*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-
-                        {/* Row 3: Issued On, Issued At */}
-                        {/*<div className="grid">*/}
-                        {/*    <div className="input-group">*/}
-                        {/*        <label>*/}
-                        {/*            Issued On <span className="required">*</span>*/}
-                        {/*        </label>*/}
-                        {/*        <input*/}
-                        {/*            type="date"*/}
-                        {/*            name="issuedOn"*/}
-                        {/*            value={formData.issuedOn}*/}
-                        {/*            onChange={handleChange}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-
-                        {/*    <div className="input-group">*/}
-                        {/*        <label>*/}
-                        {/*            Issued At <span className="required">*</span>*/}
-                        {/*        </label>*/}
-                        {/*        <div className="input-icon-group">*/}
-                        {/*            <input*/}
-                        {/*                type="text"*/}
-                        {/*                name="issuedAt"*/}
-                        {/*                value={formData.issuedAt}*/}
-                        {/*                onChange={handleChange}*/}
-                        {/*                placeholder="Enter issuing authority"*/}
-                        {/*            />*/}
-                        {/*        </div>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
                     </>
                 )}
 
                 {/* Step 3: Applicant's Personal Data (2/2) */}
                 {step === 3 && (
-                    <div>
-                        <h3>Applicant's Personal Data (2/2)</h3>
-                        <div className="grid">
-                            {/* Place of Birth - Required, Only Latin */}
-                            <div className="input-group">
-                                <label>
-                                    Place of Birth <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="placeOfBirth"
-                                        value={formData.placeOfBirth}
-                                        onChange={handleChange}
-                                        placeholder="City, Country"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Date of Birth - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Date of Birth <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    name="dateOfBirth"
-                                    value={formData.dateOfBirth}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Nationality - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Nationality <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    name="nationality"
-                                    value={formData.nationality}
-                                    onChange={handleChange}
-                                    placeholder="Enter your nationality"
-                                />
-                            </div>
-
-                            {/* Ethnic Group - Required, Only Latin */}
-                            <div className="input-group">
-                                <label>
-                                    Ethnic Group <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="ethnicGroup"
-                                        value={formData.ethnicGroup}
-                                        onChange={handleChange}
-                                        placeholder="Enter your ethnic group"
-                                    />
-                                </div>
+                    <>
+                        {/* Place of Birth - Required, Only Latin */}
+                        <div className="block">
+                            <Form.Label>{'Place of Birth *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.placeOfBirth}
+                                          bsPrefix={'form-control inp'}
+                                          name="placeOfBirth"
+                                          placeholder={'City, Country'}
+                                          onChange={(e) => {
+                                              validateField('placeOfBirth', e.target.value, regexs.forOnlyEnglishLettersAndSpaces);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('placeOfBirth') && <div className="hint error">{errorHints.forOnlyEnglishLettersAndSpaces}</div>}
+                                {(isEmptyErrors.includes('placeOfBirth') || !formData.placeOfBirth) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
-                    </div>
+
+                        {/* Date of Birth - Required */}
+                        <div className="block">
+                            <Form.Label>{'Date of Birth *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.dateOfBirth}
+                                onSelect={(e) => {
+                                    setFormData({...formData, dateOfBirth: e});
+                                }}
+                            />
+                        </div>
+
+                        {/* Nationality - Required */}
+                        <div className="block">
+                            <Form.Label>{'Nationality *'}</Form.Label>
+                            <Select isSearchable
+                                    allowCreateWhileLoading={false}
+                                    placeholder={'Enter your nationality'}
+                                    styles={{
+                                        control: (baseStyles, state) => ({
+                                            ...baseStyles,
+                                            // border: '2px solid black',
+                                            // borderColor: state.isFocused ? 'blue' : 'none',
+                                            height: '52px',
+                                            borderRadius: '4px',
+                                            backgroundColor: 'rgb(245, 247, 250)'
+                                        }),
+                                    }}
+                                    options={countries.map((country) => {
+                                        return {
+                                            value: country,
+                                            label: country,
+                                        }
+                                    })}
+                                    classNamePrefix={'custom-select'}
+                                    className={'custom-select-container'}
+                                    defaultValue={formData.nationality}
+                                    onChange={(e) => {
+                                        e && setFormData({...formData, nationality: e.value})
+                                    }}/>
+                            <div className="hint_container">
+                                {(isEmptyErrors.includes('nationality') || !formData.nationality) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
+                        </div>
+
+                        {/* Ethnic Group - Required, Only Latin */}
+                        <div className="block">
+                            <Form.Label>{'Ethnic Group *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.ethnicGroup}
+                                          bsPrefix={'form-control inp'}
+                                          name="ethnicGroup"
+                                          placeholder={'Enter your ethnic group'}
+                                          onChange={(e) => {
+                                              validateField('ethnicGroup', e.target.value, regexs.forOnlyEnglishLetters);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('ethnicGroup') && <div className="hint error">{errorHints.forOnlyEnglishLetters}</div>}
+                                {(isEmptyErrors.includes('ethnicGroup') || !formData.ethnicGroup) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
+                        </div>
+                    </>
                 )}
 
                 {/* Step 4: Applicant's Address */}
                 {step === 4 && (
-                    <div>
-                        <h3>Applicant's Address</h3>
-                        <p>
+                    <>
+                        <div className={'annotation'}>
                             A permanent address refers to your registered address in your
                             country of residency. A temporary address is your registered
                             address in Vietnam. If you have permanent registration in Vietnam,
                             please enter it in this field. Example of a correctly formatted
                             address in Vietnam: 123/5 Nguyen Hue, Phuong Vo Thi Sau, Quan 3,
                             Thanh pho Ho Chi Minh.{" "}
-                        </p>
-                        <div className="grid">
-                            {/* Permanent Address - Required, Allow Latin, Numbers & Special Characters */}
-                            <div className="input-group full-width">
-                                <label>
-                                    Permanent Address <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="permanentAddress"
-                                        value={formData.permanentAddress}
-                                        onChange={handleChange}
-                                        placeholder="Enter your permanent address"
-                                    />
-                                </div>
-                            </div>
+                        </div>
 
-                            {/* Temporary Address - Required, Allow Latin, Numbers & Special Characters */}
-                            <div className="input-group full-width">
-                                <label>
-                                    Temporary Address <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="temporaryAddress"
-                                        value={formData.temporaryAddress}
-                                        onChange={handleChange}
-                                        placeholder="Enter your temporary address (if any)"
-                                    />
-                                </div>
+                        {/* Permanent Address - Required, Allow Latin, Numbers & Special Characters */}
+                        <div className="block">
+                            <Form.Label>{'Permanent Address *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.permanentAddress}
+                                          bsPrefix={'form-control inp'}
+                                          name="permanentAddress"
+                                          placeholder={'Enter your permanent address'}
+                                          onChange={(e) => {
+                                              validateField('permanentAddress', e.target.value, regexs.forOnlyDigitsAndEnglishLettersSpacesChars);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('permanentAddress') && <div className="hint error">{errorHints.forOnlyEnglishLetters}</div>}
+                                {(isEmptyErrors.includes('permanentAddress') || !formData.permanentAddress) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
-                    </div>
+
+                        {/* Temporary Address - Required, Allow Latin, Numbers & Special Characters */}
+                        <div className="block">
+                            <Form.Label>{'Temporary Address *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.temporaryAddress}
+                                          bsPrefix={'form-control inp'}
+                                          name="temporaryAddress"
+                                          placeholder={'Enter your temporary address (if any)'}
+                                          onChange={(e) => {
+                                              validateField('temporaryAddress', e.target.value, regexs.forOnlyDigitsAndEnglishLettersSpacesChars);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('temporaryAddress') &&
+                                <div className="hint error">{errorHints.forOnlyDigitsAndEnglishLettersSpacesChars}</div>}
+                                {(isEmptyErrors.includes('temporaryAddress') || !formData.temporaryAddress) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
+                        </div>
+                    </>
                 )}
+
                 {/* Step 5: Family Information */}
                 {step === 5 && (
-                    <div>
-                        <h3>Family Information</h3>
-                        <p>
+                    <>
+                        <div className={'annotation'}>
                             If you do not have information about your parents and/or spouse,
                             please write "Don't have" in the "Name" field. Otherwise, provide
                             the relevant information.{" "}
-                        </p>
-                        <div className="grid">
-                            {/* Father's Name - Required, Only Latin */}
-                            <div className="input-group">
-                                <label>
-                                    Father's Name <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="fatherName"
-                                        value={formData.fatherName}
-                                        onChange={handleChange}
-                                        placeholder="Enter your father's full name"
-                                    />
-                                </div>
-                            </div>
+                        </div>
 
-                            {/* Father's Date of Birth - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Father's Date of Birth <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    name="fatherDOB"
-                                    value={formData.fatherDOB}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Mother's Name - Required, Only Latin */}
-                            <div className="input-group">
-                                <label>
-                                    Mother's Name <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="motherName"
-                                        value={formData.motherName}
-                                        onChange={handleChange}
-                                        placeholder="Enter your mother's full name"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Mother's Date of Birth - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Mother's Date of Birth <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="date"
-                                    name="motherDOB"
-                                    value={formData.motherDOB}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Spouse's Name - Only Latin (Optional) */}
-                            <div className="input-group">
-                                <label>Spouse's Name</label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="spouseName"
-                                        value={formData.spouseName}
-                                        onChange={handleChange}
-                                        placeholder="Enter your spouse's full name (if any)"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Spouse's Date of Birth (Optional) */}
-                            <div className="input-group">
-                                <label>Spouse's Date of Birth</label>
-                                <input
-                                    type="date"
-                                    name="spouseDOB"
-                                    value={formData.spouseDOB}
-                                    onChange={handleChange}
-                                />
+                        {/* Father's Name - Required, Only Latin */}
+                        <div className="block">
+                            <Form.Label>{'Father\'s Name *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.fatherName}
+                                          bsPrefix={'form-control inp'}
+                                          name="fatherName"
+                                          placeholder={'Enter your father\'s full name'}
+                                          onChange={(e) => {
+                                              validateField('fatherName', e.target.value, regexs.forOnlyEnglishLettersAndSpaces);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('fatherName') && <div className="hint error">{errorHints.forOnlyEnglishLettersAndSpaces}</div>}
+                                {(isEmptyErrors.includes('fatherName') || !formData.fatherName) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
-                    </div>
+
+                        {/* Father's Date of Birth - Required */}
+                        <div className="block">
+                            <Form.Label>{'Father\'s Date of Birth *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.fatherDOB}
+                                onSelect={(e) => {
+                                    setFormData({...formData, fatherDOB: e});
+                                }}
+                            />
+                        </div>
+
+                        {/* Mother's Name - Required, Only Latin */}
+                        <div className="block">
+                            <Form.Label>{'Mother\'s Name *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.motherName}
+                                          bsPrefix={'form-control inp'}
+                                          name="motherName"
+                                          placeholder={'Enter your mother\'s full name'}
+                                          onChange={(e) => {
+                                              validateField('motherName', e.target.value, regexs.forOnlyEnglishLettersAndSpaces);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('motherName') && <div className="hint error">{errorHints.forOnlyEnglishLettersAndSpaces}</div>}
+                                {(isEmptyErrors.includes('motherName') || !formData.motherName) &&
+                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
+                        </div>
+
+                        {/* Mother's Date of Birth - Required */}
+                        <div className="block">
+                            <Form.Label>{'Mother\'s Date of Birth *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.motherDOB}
+                                onSelect={(e) => {
+                                    setFormData({...formData, motherDOB: e});
+                                }}
+                            />
+                        </div>
+
+                        {/* Spouse's Name - Only Latin (Optional) */}
+                        <div className="block">
+                            <Form.Label>{'Spouse\'s Name'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.spouseName}
+                                          bsPrefix={'form-control inp'}
+                                          name="spouseName"
+                                          placeholder={'Enter your spouse\'s full name (if any)'}
+                                          onChange={(e) => {
+                                              validateField('spouseName', e.target.value, regexs.forOnlyEnglishLettersAndSpaces);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('spouseName') && <div className="hint error">{errorHints.forOnlyEnglishLettersAndSpaces}</div>}
+                            </div>
+                        </div>
+
+                        {/* Spouse's Date of Birth (Optional) */}
+                        {formData.spouseName && <div className="block">
+                            <Form.Label>{'Spouse\'s Date of Birth'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.spouseDOB}
+                                onSelect={(e) => {
+                                    setFormData({...formData, spouseDOB: e});
+                                }}
+                            />
+                        </div>}
+                    </>
                 )}
 
                 {/* Step 6: Contact Information */}
                 {step === 6 && (
-                    <div>
-                        <h3>Contact Information</h3>
-                        <div className="grid">
-                            {/* Phone Number - Required, Only Numbers and special symbols */}
-                            <div className="input-group">
-                                <label>
-                                    Phone Number <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        placeholder="Enter your phone number (e.g., +84 123456789)"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Email Address - Required, Only Valid Emails */}
-                            <div className="input-group">
-                                <label>
-                                    Email Address <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        placeholder="Enter your email (e.g., example@mail.com)"
-                                    />
-                                </div>
+                    <>
+                        {/* Phone Number - Required, Only Numbers and special symbols */}
+                        <div className="block">
+                            <Form.Label>{'Phone Number *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.phone}
+                                          bsPrefix={'form-control inp'}
+                                          name="phone"
+                                          placeholder={'Enter your phone number (e.g., +84 123456789)'}
+                                          onChange={(e) => {
+                                              validateField('phone', e.target.value, regexs.forPhone);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('phone') && <div className="hint error">{errorHints.forPhone}</div>}
+                                {(isEmptyErrors.includes('phone') || !formData.phone) && <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
                             </div>
                         </div>
-                    </div>
+
+                        {/* Email Address - Required, Only Valid Emails */}
+                        <div className="block">
+                            <Form.Label>{'Email Address *'}</Form.Label>
+                            <Form.Control type={'text'}
+                                          value={formData.email}
+                                          bsPrefix={'form-control inp'}
+                                          name="email"
+                                          placeholder={'Enter your email (e.g., example@mail.com)'}
+                                          onChange={(e) => {
+                                              validateField('email', e.target.value, regexs.forEmail);
+                                              handleChange(e);
+                                          }}/>
+                            <div className="hint_container">
+                                {errors.includes('email') && <div className="hint error">{errorHints.forEmail}</div>}
+                                {(isEmptyErrors.includes('email') || !formData.email) && <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+                            </div>
+                        </div>
+                    </>
                 )}
 
                 {/* Step 7: Applicant's Background */}
@@ -925,7 +848,21 @@ const TestForm = () => {
             <div className="buttons">
                 {step > 1 && <Button variant="primary" onClick={prevStep}>Back</Button>}
                 {/*{step > 1 && <button onClick={prevStep}>Back</button>}*/}
-                {step < 10 && <Button variant="primary" onClick={nextStep}>Продолжить</Button>}
+                {step < 10 && <Button disabled={isNextButtonDisabled} variant="primary" onClick={() => {
+
+                    // const newDate = new Date();
+                    // console.log('newDate', newDate);
+                    // console.log('typeof newDate', typeof newDate);
+                    //
+                    // const newDateString = (new Date()).toLocaleDateString();
+                    // console.log('newDateString', newDateString);
+                    // console.log('typeof newDateString', typeof newDateString);
+                    //
+                    // const dateFromNewDateString = stringToDate(newDateString, "dd.MM.yyyy",".");
+                    // console.log('dateFromNewDateString', dateFromNewDateString);
+                    // console.log('typeof dateFromNewDateString', typeof dateFromNewDateString);
+                    nextStep()
+                }}>Next</Button>}
                 {/*{step < 10 && <button onClick={nextStep}>Next</button>}*/}
                 {step === 10 && <button>Submit</button>}
             </div>

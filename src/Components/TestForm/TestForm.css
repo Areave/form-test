@@ -52,6 +52,11 @@
     position: relative;
 }
 
+.custom-select__control {
+  border: .8px solid rgb(222, 226, 230) !important;
+  box-shadow: none !important;
+}
+
 .block {
     /*margin-bottom: 10px;*/
     padding-bottom: 18px;

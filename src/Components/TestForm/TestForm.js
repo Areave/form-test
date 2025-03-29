@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
-import "./TestForm.css";
+
 import {Form} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import FormSelect from 'react-bootstrap/FormSelect';
 import Select from 'react-select';
-import {pageTitleArray, provinces, regexs, errorHints} from './data.js'
+import {pageTitleArray, provinces, regexs, errorHints, countries} from './data.js'
 import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
-import 'react-datepicker/dist/react-datepicker.css'
-import {countries} from "./data";
+import 'react-datepicker/dist/react-datepicker.css';
+import "./TestForm.css";
 
 const CustomSelect = ({formData, label, placeholder, required, fieldString, errors, isEmptyErrors, hintFieldString, validateField, handleChange}) => {
     return <>

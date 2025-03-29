@@ -1,167 +1,219 @@
 .content {
-  /*flex-grow: 1;*/
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 30px;
-  min-height: 100vh;
+    /*flex-grow: 1;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 30px;
+    min-height: 100vh;
 }
 
 .page_title {
-  font-size: 24px;
-  margin-bottom: 24px;
-  font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 24px;
+    font-weight: 700;
 }
 
 .glass-card {
-  /*background: rgba(255, 255, 255, 0.35);*/
-  /*backdrop-filter: blur(12px);*/
-  /*-webkit-backdrop-filter: blur(12px);*/
-  /*!*border-radius: 15px;*!*/
+    /*background: rgba(255, 255, 255, 0.35);*/
+    /*backdrop-filter: blur(12px);*/
+    /*-webkit-backdrop-filter: blur(12px);*/
+    /*!*border-radius: 15px;*!*/
 
 
-  /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);*/
-  /*transition: transform 0.3s ease-in-out;*/
+    /*box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);*/
+    /*transition: transform 0.3s ease-in-out;*/
 
-  padding: 24px;
-  width: 500px;
-  border-radius: 12px;
-  background-color: white;
-  text-align: center;
-  box-shadow: 0 24px 48px #e6ebf566, 0 1px 4px #e3ebfc;
-  margin-bottom: 30px;
+    padding: 24px;
+    width: 500px;
+    border-radius: 12px;
+    background-color: white;
+    text-align: center;
+    box-shadow: 0 24px 48px #e6ebf566, 0 1px 4px #e3ebfc;
+    margin-bottom: 30px;
 
 }
 
 .page_title {
-  font-weight:700;
-  font-size: 24px;
+    font-weight: 700;
+    font-size: 24px;
 }
+
 .grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .block {
-  /*margin-bottom: 10px;*/
-  padding-bottom: 18px;
-  text-align: left;
-  position: relative;
-}
-.annotation {
-  margin-bottom: 20px;
+    /*margin-bottom: 10px;*/
+    padding-bottom: 18px;
+    text-align: left;
+    position: relative;
 }
 
-.block > label {
-  /*font-weight: bold;*/
-  /*font-family: 'Lato, Arial, sans-serif';*/
-  ;
-  font-weight:400;
-  font-size: 14px;
-  text-align: left;
-  margin-bottom: 3px;
+.annotation {
+    margin-bottom: 20px;
 }
+
+.block > .tooltip > label {
+    /*font-weight: bold;*/
+    /*font-family: 'Lato, Arial, sans-serif';*/;
+    font-weight: 400;
+    font-size: 14px;
+    text-align: left;
+    margin-bottom: 3px;
+}
+
 .block > .hint_container {
-  position: absolute;
-  bottom: 3px;
-  height: 16px;
+    position: absolute;
+    bottom: 3px;
+    height: 16px;
 }
+
 .block > .hint_container > .hint {
-  /*margin-top: 8px;*/
-  font-size: 12px;
-  color: grey;
+    /*margin-top: 8px;*/
+    font-size: 12px;
+    color: grey;
 }
+
 .block > .hint_container > .hint.error {
-  color: red;
+    color: red;
 }
+
 .block > .form-check {
-  width: 100px;
+    width: 100px;
+}
+
+.block > .tooltip_cont > select {
+    height: 52px;
+    font-size: 16px;
+    background-color: rgb(245, 247, 250);
+    border-radius: 4px;
 }
 .block > select {
-  height: 52px;
-  font-size: 16px;
-  background-color: rgb(245, 247, 250);
-  border-radius: 4px;
-}
-.block > .datePicker > .react-datepicker__input-container > input{
-  width: 100%;
-  height: 52px;
-  font-size: 16px;
-  background-color: rgb(245, 247, 250);
-  border-radius: 4px;
-  padding-left: 40px;
-  color: grey;
-  border: .8px solid rgb(222, 226, 230);
-}
-/*.block > .datePicker > .react-datepicker__input-container > input:hover,*/
-/*.block > .datePicker > .react-datepicker__input-container > input:active,*/
-.block > .datePicker > .react-datepicker__input-container > input:focus,
-.block > .datePicker > .react-datepicker__input-container > input:focus-visible {
-  outline: 1px solid blue !important;
-  box-shadow: none;
-}
-.block > .datePicker > .react-datepicker__input-container > svg {
-  padding-top: 18px;
-  padding-left: 15px;
-}
-.block > .datePicker {
-  width: 100%;
+    height: 52px;
+    font-size: 16px;
+    background-color: rgb(245, 247, 250);
+    border-radius: 4px;
 }
 
+.block > tooltip_cont[data-tooltip] {
+    position: relative; /* Относительное позиционирование */
+}
+
+.block > .tooltip_cont[data-tooltip]::after {
+    content: attr(data-tooltip); /* Выводим текст */
+    position: absolute; /* Абсолютное позиционирование */
+    /*width: 500px; !* Ширина подсказки *!*/
+    left: 100px;
+    top: 0px; /* Положение подсказки */
+    background: #3989c9; /* Синий цвет фона */
+    color: #fff; /* Цвет текста */
+    padding: 0.5em; /* Поля вокруг текста */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Параметры тени */
+    pointer-events: none; /* Подсказка */
+    opacity: 0; /* Подсказка невидима */
+    transition: 1s; /* Время появления подсказки */
+}
+
+.block > .tooltip_cont[data-tooltip]:hover::after {
+    opacity: 1; /* Показываем подсказку */
+}
+
+.block > .datePicker > .react-datepicker__input-container > input {
+    width: 100%;
+    height: 52px;
+    font-size: 16px;
+    background-color: rgb(245, 247, 250);
+    border-radius: 4px;
+    padding-left: 40px;
+    color: grey;
+    border: .8px solid rgb(222, 226, 230);
+}
+
+.block > .datePicker > .react-datepicker__input-container > input:focus,
+.block > .datePicker > .react-datepicker__input-container > input:focus-visible {
+    outline: 1px solid blue !important;
+    box-shadow: none;
+}
+
+.block > .datePicker > .react-datepicker__input-container > svg {
+    padding-top: 18px;
+    padding-left: 15px;
+}
+
+.block > .datePicker {
+    width: 100%;
+}
+
+.block > .tooltip > select:focus {
+    border-color: blue;
+    outline: 0;
+    box-shadow: none;
+}
 .block > select:focus {
-  border-color: blue;
-  outline: 0;
-  box-shadow: none;
+    border-color: blue;
+    outline: 0;
+    box-shadow: none;
 }
 
 .custom-select__control:hover,
 .custom-select__control:active,
 .custom-select__control:focus {
-  border: 1px solid blue !important;
-  box-shadow: none;
+    border: 1px solid blue !important;
+    box-shadow: none;
 }
 
+.block > .tooltip_cont > .inp {
+    height: 52px;
+    background-color: rgb(245, 247, 250) !important;
+}
 .block > .inp {
-  height: 52px;
-  background-color: rgb(245, 247, 250) !important;
+    height: 52px;
+    background-color: rgb(245, 247, 250) !important;
 }
 
+.block > .tooltip_cont > .inp:hover,
+.block > .tooltip_cont > .inp:active,
+.block > .tooltip_cont > .inp:focus {
+    border: 1px solid blue !important;
+    box-shadow: none;
+}
 .block > .inp:hover,
 .block > .inp:active,
 .block > .inp:focus {
-  border: 1px solid blue !important;
-  box-shadow: none;
+    border: 1px solid blue !important;
+    box-shadow: none;
 }
 
 .buttons {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .buttons > button {
-  display: inline-block;
-  font-family: Lato, Arial, sans-serif;
-  /*width: 100%;*/
-  outline: none;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  padding: 12px 38px;
-  text-align: center;
-  font-size: 16px;
-  line-height: 24px;
-  color: #fff;
-  background-color: #0d4cd3;
-  cursor: pointer;
-  white-space: nowrap;
-  margin: 0 15px 40px;
+    display: inline-block;
+    font-family: Lato, Arial, sans-serif;
+    /*width: 100%;*/
+    outline: none;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 12px 38px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 24px;
+    color: #fff;
+    background-color: #0d4cd3;
+    cursor: pointer;
+    white-space: nowrap;
+    margin: 0 15px 40px;
 }

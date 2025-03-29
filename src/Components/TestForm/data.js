@@ -7,7 +7,7 @@ export const regexs = {
     forOnlyEnglishLettersAndSpaces: /^[a-zA-Z ]+$/,
     forOnlyDigits: /^[0-9]+$/,
     forEmail: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-    forPhone: /^[0-9+ ]+$/,
+    forPhone: /^[0-9+ -()]+$/,
 };
 
 export const errorHints = {
@@ -29,11 +29,9 @@ export const pageTitleArray = ['',
     'Applicant\'s Address',
     'Family Information',
     'Contact Information',
-    '24234',
-    '24234',
-    '24234',
-    '24234',
-    '24234',
+    'Applicant\'s Background',
+    'Other Information (1/2)',
+    'Other Information (2/2)',
 ];
 
 export const provinces = [

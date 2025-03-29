@@ -11,9 +11,32 @@ import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import 'react-datepicker/dist/react-datepicker.css'
 import {countries} from "./data";
 
+const CustomSelect = ({formData, label, placeholder, required, fieldString, errors, isEmptyErrors, hintFieldString, validateField, handleChange}) => {
+    return <>
+        <Form.Label>{label + (required ? ' *' : '')}</Form.Label>
+        <div className="tooltip_cont" data-tooltip={placeholder}>
+            <Form.Control type={'text'}
+                          value={formData[fieldString]}
+                          bsPrefix={'form-control inp'}
+                          name={fieldString}
+                          placeholder={placeholder}
+                          onChange={(e) => {
+                              (regexs[hintFieldString] || required) && validateField(fieldString, e.target.value, regexs[hintFieldString]);
+                              handleChange(e);
+                          }}/>
+        </div>
+        {/*<div className="tooltip">{placeholder}</div>*/}
+        <div className="hint_container">
+            {hintFieldString && errors.includes(fieldString) && <div className="hint error">{errorHints[hintFieldString]}</div>}
+            {required && (isEmptyErrors.includes(fieldString) || !formData[fieldString]) &&
+            <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
+        </div>
+    </>
+};
+
 
 const TestForm = () => {
-    const [step, setStep] = useState(6);
+    const [step, setStep] = useState(1);
     const [errors, setErrors] = useState([]);
     const [isEmptyErrors, setIsEmptyErrors] = useState([]);
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(false);
@@ -40,18 +63,18 @@ const TestForm = () => {
         spouseDOB: new Date(),
         phone: "",
         email: "",
-        lastEntry: "",
-        submissionDate: "",
+        lastEntry: new Date(),
+        submissionDate: new Date(),
         occupation: "",
         workplace: "",
-        criminalRecord: "",
+        criminalRecord: "No",
         crimeDetails: "",
-        certificateType: "",
-        prohibitionConfirmation: "",
+        certificateType: 'Form N1',
+        prohibitionConfirmation: "Yes",
         purpose: "",
         numberOfCertificates: 1,
-        electronicCopy: "",
-        deliveryMethod: "",
+        electronicCopy: "No",
+        deliveryMethod: "Pickup at the office",
         deliveryAddress: "",
     });
 
@@ -67,6 +90,7 @@ const TestForm = () => {
     useEffect(() => {
         // console.log('formData', formData);
         const shouldNextButtonBeDisabled = checkIsNextButtonDisabled();
+        console.log('shouldNextButtonBeDisabled', shouldNextButtonBeDisabled);
         if (isNextButtonDisabled !== shouldNextButtonBeDisabled) {
             setIsNextButtonDisabled(shouldNextButtonBeDisabled);
         }
@@ -76,7 +100,7 @@ const TestForm = () => {
         // console.log('errors', errors);
     }, [errors]);
     useEffect(() => {
-        // console.log('isEmptyErrors', isEmptyErrors);
+        console.log('isEmptyErrors', isEmptyErrors);
     }, [isEmptyErrors]);
 
     const handleChange = (e) => {
@@ -88,10 +112,6 @@ const TestForm = () => {
     };
 
     const checkIsNextButtonDisabled = () => {
-        console.log(' errors.length > 0', errors.length > 0);
-        console.log('isEmptyErrors.length > 0', isEmptyErrors.length > 0);
-        console.log('document.getElementsByClassName(\'hint\').length > 0', document.getElementsByClassName('hint').length > 0);
-        console.log('document.getElementsByClassName(\'hint\')', document.getElementsByClassName('hint'));
         return errors.length > 0 || isEmptyErrors.length > 0 || document.getElementsByClassName('hint').length > 0;
     };
 
@@ -120,32 +140,21 @@ const TestForm = () => {
                     setIsEmptyErrors([...isEmptyErrors, fieldName]);
                 }
             } else {
+                console.log('value', value);
+                console.log('isEmptyErrors.includes(fieldName)', isEmptyErrors.includes(fieldName));
                 if (isEmptyErrors.includes(fieldName)) {
                     setIsEmptyErrors(isEmptyErrors.filter(errorString => errorString !== fieldName));
                 }
-                validateFieldByRegex(fieldName, value, regex);
+                regex && validateFieldByRegex(fieldName, value, regex);
             }
         } else {
-            validateFieldByRegex(fieldName, value, regex);
+            regex && validateFieldByRegex(fieldName, value, regex);
         }
     };
 
-
-    // const stringToDate = (_date, _format, _delimiter) => {
-    //     const formatLowerCase = _format.toLowerCase();
-    //     const formatItems = formatLowerCase.split(_delimiter);
-    //     const dateItems = _date.split(_delimiter);
-    //     const monthIndex = formatItems.indexOf("mm");
-    //     const dayIndex = formatItems.indexOf("dd");
-    //     const yearIndex = formatItems.indexOf("yyyy");
-    //     let month = parseInt(dateItems[monthIndex]);
-    //     month -= 1;
-    //     return new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
-    // };
-
     return (<div className={'content'}>
-            <div className="page_title">{pageTitleArray[step] || ''}</div>
 
+            <div className="page_title">{pageTitleArray[step] || ''}</div>
 
             <div className="glass-card">
                 {step === 1 && (
@@ -192,21 +201,18 @@ const TestForm = () => {
                     <>
                         {/*Name*/}
                         <div className="block">
-                            <Form.Label>{'Full Name *'}</Form.Label>
-                            <Form.Control type={'text'}
-                                          value={formData.fullName}
-                                          bsPrefix={'form-control inp'}
-                                          name="fullName"
+                            <CustomSelect formData={formData}
+                                          label={'Full Name'}
                                           placeholder={'Enter your full legal name'}
-                                          onChange={(e) => {
-                                              validateField('fullName', e.target.value, regexs.forOnlyEnglishAndVietnameeseLetters);
-                                              handleChange(e);
-                                          }}/>
-                            <div className="hint_container">
-                                {errors.includes('fullName') && <div className="hint error">{errorHints.forOnlyEnglishAndVietnameeseLetters}</div>}
-                                {(isEmptyErrors.includes('fullName') || !formData.fullName) &&
-                                <div className="hint">{errorHints.fieldShouldBeFilled}</div>}
-                            </div>
+                                          required={true}
+                                          fieldString={'fullName'}
+                                          errors={errors}
+                                          isEmptyErrors={isEmptyErrors}
+                                          hintFieldString={'forOnlyEnglishAndVietnameeseLetters'}
+                                          validateField={validateField}
+                                          handleChange={handleChange}
+
+                            />
                         </div>
 
                         {/*Sex*/}
@@ -584,244 +590,207 @@ const TestForm = () => {
 
                 {/* Step 7: Applicant's Background */}
                 {step === 7 && (
-                    <div>
-                        <h3>Applicant's Background</h3>
-                        <p>
+                    <>
+                        <div className={'annotation'}>
                             Enter the date of your last entry into Vietnam as shown in your
                             passport. Submission date – indicate the date when you plan to
                             submit your application. If you have not decided on the date yet,
                             you may leave this field blank{" "}
-                        </p>
-                        <div className="grid">
-                            {/* Last Entry Date - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Last Entry Date <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="date"
-                                        name="lastEntry"
-                                        value={formData.lastEntry}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Submission Date - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Submission Date <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="date"
-                                        name="submissionDate"
-                                        value={formData.submissionDate}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Occupation - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Occupation <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="occupation"
-                                        value={formData.occupation}
-                                        onChange={handleChange}
-                                        placeholder="Enter your occupation"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Workplace - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Workplace <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="workplace"
-                                        value={formData.workplace}
-                                        onChange={handleChange}
-                                        placeholder="Enter your workplace"
-                                    />
-                                </div>
-                            </div>
                         </div>
-                    </div>
+
+                        {/* Last Entry Date - Required */}
+                        <div className="block">
+                            <Form.Label>{'Last Entry Date *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.lastEntry}
+                                onSelect={(e) => {
+                                    setFormData({...formData, lastEntry: e});
+                                }}
+                            />
+                        </div>
+
+                        {/* Submission Date - Required */}
+                        <div className="block">
+                            <Form.Label>{'Submission Date *'}</Form.Label>
+                            <DatePicker
+                                wrapperClassName="datePicker"
+                                dateFormat="dd/MM/yyyy"
+                                showIcon
+                                selected={formData.submissionDate}
+                                onSelect={(e) => {
+                                    setFormData({...formData, submissionDate: e});
+                                }}
+                            />
+                        </div>
+
+
+                        {/* Occupation - Required */}
+                        <div className="block">
+                            <CustomSelect formData={formData}
+                                          label={'Occupation '}
+                                          placeholder={'Enter your full legal name'}
+                                          required={true}
+                                          fieldString={'occupation'}
+                                          errors={errors}
+                                          isEmptyErrors={isEmptyErrors}
+                                          validateField={validateField}
+                                          handleChange={handleChange}
+
+                            />
+                        </div>
+
+                        {/* Workplace - Required */}
+                        <div className="block">
+                            <CustomSelect formData={formData}
+                                          label={'Workplace '}
+                                          placeholder={'Enter your workplace'}
+                                          required={true}
+                                          fieldString={'workplace'}
+                                          errors={errors}
+                                          isEmptyErrors={isEmptyErrors}
+                                          validateField={validateField}
+                                          handleChange={handleChange}
+
+                            />
+                        </div>
+                    </>
                 )}
 
                 {/* Step 8: Other Information (1/2) */}
                 {step === 8 && (
-                    <div>
-                        <h3>Other Information (1/2)</h3>
-                        <div className="grid">
-                            {/* Do you have a criminal record? - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Do you have a criminal record?{" "}
-                                    <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <select
-                                        name="criminalRecord"
+                    <>
+                        {/* Do you have a criminal record? - Required */}
+                        <div className="block">
+                            <Form.Label>{'Do you have a criminal record?'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
                                         value={formData.criminalRecord}
+                                        name={'criminalRecord'}
                                         onChange={handleChange}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Conditional Field: Crime Details (Only if "Yes" is selected) */}
-                            {formData.criminalRecord === "Yes" && (
-                                <div className="input-group">
-                                    <label>Details of Criminal Record</label>
-                                    <input
-                                        type="text"
-                                        name="crimeDetails"
-                                        value={formData.crimeDetails}
-                                        onChange={handleChange}
-                                        placeholder="Enter details"
-                                    />
-                                </div>
-                            )}
-
-                            {/* Certificate Type - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Criminal Record Certificate Type{" "}
-                                    <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <select
-                                        name="certificateType"
-                                        value={formData.certificateType}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="Form N1">Form N1</option>
-                                        <option value="Form N2">Form N2</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Conditional Field: Prohibition Confirmation (Only if "Form N1" is selected) */}
-                            {formData.certificateType === "Form N1" && (
-                                <div className="input-group">
-                                    <label>Prohibition Confirmation (Form N1)</label>
-                                    <select
-                                        name="prohibitionConfirmation"
-                                        value={formData.prohibitionConfirmation}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="Yes">Yes</option>
-                                        <option value="No">No</option>
-                                    </select>
-                                </div>
-                            )}
+                                        placeholder={'ID Document'}>
+                                <option value="Yes">{'Yes'}</option>
+                                <option value="No">{'No'}</option>
+                            </FormSelect>
                         </div>
-                    </div>
+
+                        {/* Conditional Field: Crime Details (Only if "Yes" is selected) */}
+                        {formData.criminalRecord === "Yes" && (
+                            <div className="block">
+                                <CustomSelect formData={formData}
+                                              label={'Details of Criminal Record '}
+                                              placeholder={'Enter details'}
+                                              required={false}
+                                              fieldString={'crimeDetails'}
+                                              errors={errors}
+                                              isEmptyErrors={isEmptyErrors}
+                                              validateField={validateField}
+                                              handleChange={handleChange}
+
+                                />
+                            </div>
+                        )}
+
+                        {/* Certificate Type - Required */}
+                        <div className="block">
+                            <Form.Label>{'Criminal Record Certificate Type'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
+                                        value={formData.certificateType}
+                                        name={'certificateType'}
+                                        onChange={handleChange}
+                                        placeholder={'certificateType'}>
+                                <option value="Form N1">{'Form N1'}</option>
+                                <option value="Form N2">{'Form N2'}</option>
+                            </FormSelect>
+                        </div>
+
+                        {/* Conditional Field: Prohibition Confirmation (Only if "Form N1" is selected) */}
+                        {formData.certificateType === "Form N1" && (
+                            <div className="block">
+                                <Form.Label>{'Prohibition Confirmation (Form N1)'}</Form.Label>
+                                <FormSelect bsPrefix={'form-select sel'}
+                                            value={formData.prohibitionConfirmation}
+                                            name={'prohibitionConfirmation'}
+                                            onChange={handleChange}
+                                            placeholder={'ID Document'}>
+                                    <option value="Yes">{'Yes'}</option>
+                                    <option value="No">{'No'}</option>
+                                </FormSelect>
+                            </div>
+                        )}
+                    </>
                 )}
 
                 {/* Step 9: Other Information (2/2) */}
                 {step === 9 && (
-                    <div>
-                        <h3>Other Information (2/2)</h3>
-                        <div className="grid">
-                            {/* Purpose of Applying - Required, Only Latin + Numbers + Symbols */}
-                            <div className="input-group">
-                                <label>
-                                    Purpose of Applying <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="purpose"
-                                        value={formData.purpose}
-                                        onChange={handleChange}
-                                        placeholder="Enter the purpose of applying"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Number of Criminal Clearance Certificates - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Number of certificates <span className="required">*</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    name="numberOfCertificates"
-                                    value={formData.numberOfCertificates}
-                                    min="0"
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            {/* Receive Electronic Copy Online - Required */}
-                            <div className="input-group">
-                                <label>
-                                    Receive Electronic Copy Online?{" "}
-                                    <span className="required">*</span>
-                                </label>
-                                <select
-                                    name="electronicCopy"
-                                    value={formData.electronicCopy}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                            </div>
-
-                            {/* Form and Methods of Receiving Results - Required */}
-                            <div className="input-group">
-                                <label>
-                                    How to receive
-                                    <span className="required">*</span>
-                                </label>
-                                <select
-                                    name="deliveryMethod"
-                                    value={formData.deliveryMethod}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select</option>
-                                    <option value="Pickup at Office">Pickup at Office</option>
-                                    <option value="Delivery">Delivery</option>
-                                </select>
-                            </div>
+                    <>
+                        {/* Purpose of Applying - Required, Only Latin + Numbers + Symbols */}
+                        <div className="block">
+                            <CustomSelect formData={formData}
+                                          label={'Purpose of Applying'}
+                                          placeholder={'Enter the purpose of applying'}
+                                          required={true}
+                                          fieldString={'purpose'}
+                                          errors={errors}
+                                          isEmptyErrors={isEmptyErrors}
+                                          hintFieldString={'forOnlyDigitsAndEnglishLettersSpacesChars'}
+                                          validateField={validateField}
+                                          handleChange={handleChange}
+                            />
                         </div>
 
-                        {/* Conditional Field: Show Delivery Address on a Full Width New Line */}
-                        {formData.deliveryMethod === "Delivery" && (
-                            <div className="input-group full-width">
-                                <label>
-                                    Delivery Address <span className="required">*</span>
-                                </label>
-                                <div className="input-icon-group">
-                                    <input
-                                        type="text"
-                                        name="deliveryAddress"
-                                        value={formData.deliveryAddress}
-                                        onChange={handleChange}
-                                        placeholder="Enter full delivery address"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                        {/* Number of Criminal Clearance Certificates - Required */}
+                        <div className="block">
+                            <Form.Label>{'Number of certificates *'}</Form.Label>
+                            <Form.Control type={'number'}
+                                          value={formData.numberOfCertificates}
+                                          bsPrefix={'form-control inp'}
+                                          name={'numberOfCertificates'}
+                                          onChange={handleChange}/>
+                        </div>
+
+                        {/* Receive Electronic Copy Online - Required */}
+                        <div className="block">
+                            <Form.Label>{'Receive Electronic Copy Online?'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
+                                        value={formData.electronicCopy}
+                                        name={'electronicCopy'}
+                                        onChange={handleChange}>
+                                <option value="Yes">{'Yes'}</option>
+                                <option value="No">{'No'}</option>
+                            </FormSelect>
+                        </div>
+
+                        {/* Form and Methods of Receiving Results - Required */}
+                        <div className="block">
+                            <Form.Label>{'How to receive'}</Form.Label>
+                            <FormSelect bsPrefix={'form-select sel'}
+                                        value={formData.deliveryMethod}
+                                        name={'deliveryMethod'}
+                                        onChange={handleChange}>
+                                <option value="Pickup at Office">{'Pickup at Office'}</option>
+                                <option value="Delivery">{'Delivery'}</option>
+                            </FormSelect>
+                        </div>
+
+                        {formData.deliveryMethod === 'Delivery' && <div className="block">
+                            <CustomSelect formData={formData}
+                                          label={'Delivery Address'}
+                                          placeholder={'Enter full delivery address'}
+                                          required={true}
+                                          fieldString={'deliveryAddress'}
+                                          errors={errors}
+                                          isEmptyErrors={isEmptyErrors}
+                                          hintFieldString={'forOnlyEnglishAndVietnameeseLetters'}
+                                          validateField={validateField}
+                                          handleChange={handleChange}
+
+                            />
+                        </div>}
+
+
+                    </>
                 )}
 
                 {/* Step 10: Summary */}
@@ -840,30 +809,14 @@ const TestForm = () => {
                 )}
                 <h2 className={'card_title'}>Step {step} of 10</h2>
 
-                {/* Step Navigation */}
-
             </div>
 
 
             <div className="buttons">
                 {step > 1 && <Button variant="primary" onClick={prevStep}>Back</Button>}
-                {/*{step > 1 && <button onClick={prevStep}>Back</button>}*/}
                 {step < 10 && <Button disabled={isNextButtonDisabled} variant="primary" onClick={() => {
-
-                    // const newDate = new Date();
-                    // console.log('newDate', newDate);
-                    // console.log('typeof newDate', typeof newDate);
-                    //
-                    // const newDateString = (new Date()).toLocaleDateString();
-                    // console.log('newDateString', newDateString);
-                    // console.log('typeof newDateString', typeof newDateString);
-                    //
-                    // const dateFromNewDateString = stringToDate(newDateString, "dd.MM.yyyy",".");
-                    // console.log('dateFromNewDateString', dateFromNewDateString);
-                    // console.log('typeof dateFromNewDateString', typeof dateFromNewDateString);
                     nextStep()
                 }}>Next</Button>}
-                {/*{step < 10 && <button onClick={nextStep}>Next</button>}*/}
                 {step === 10 && <button>Submit</button>}
             </div>
         </div>
